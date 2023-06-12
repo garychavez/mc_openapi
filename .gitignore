@@ -1,3 +1,8 @@
+# Compiled class file
+*.class
+
+# Log file
+*.log
 
 # BlueJ files
 *.ctxt
@@ -16,6 +21,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
 
 ### STS ###
 .apt_generated
@@ -42,10 +48,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
 ### target ###
 /target/**
 
 ###No se incluye estos archivos ###
 mvnw
 mvnw.cmd
-HELP.md
