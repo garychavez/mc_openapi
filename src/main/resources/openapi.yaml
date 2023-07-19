@@ -1,62 +1,91 @@
 openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: Business Microservice Profile V1
   description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-
-    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+    Este microservicio tendrá a los clientes y a los usuarios colaboradores de la empresa Coroda Automatic Door SAC.
     
-    Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  termsOfService: http://swagger.io/terms/
+    Algunos enlaces útiles:
+    - [El repositorio de mc_profile](https://github.com/garychavez/mc_openapi)
+    - [La definición de API mc_profile](https://github.com/garychavez/mc_openapi)
+
   contact:
-    email: apiteam@swagger.io
+    email: garychavezj@gmail.com
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.11
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  version: 0.0.1
+
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://mcprofile/api/v1
 tags:
-  - name: pet
-    description: Everything about your Pets
+  - name: profile
+    description: API encargada de la gestion de los Perfiles
     externalDocs:
-      description: Find out more
-      url: http://swagger.io
-  - name: store
-    description: Access to Petstore orders
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user
-    description: Operations about user
+      description: Saber más
+      url: https://github.com/garychavez/mc_openapi/blob/main/README.md
+
 paths:
-  /pet:
+  /person:
+    post:
+      tags:
+        - profile
+      summary: Metodo a traves del cual se envia la informacion del Perfil que sera registrada dentro de la base de datos.
+      description: Para el registro del Perfil , sera necesario el llenado de todo los campos , a excepcion de los Id´s los cuales seran generados automaticamente.
+      operationId: addPersonProfile
+      requestBody:
+        description: Crear un nuevo perfil
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonResponse'
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
+    get:
+      tags:
+        - profile
+      summary: Metodo a traves del cual se obtiene la informacion del Perfil.
+      description: Para la obtención del Perfil , sera necesario mandar ciertos parametros.
+      operationId: getDataPersonProfile
+      parameters:
+        - name: params
+          in: query
+          description: Parametros de busqueda
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonResponse'
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
     put:
       tags:
-        - pet
-      summary: Update an existing pet
-      description: Update an existing pet by Id
-      operationId: updatePet
+        - profile
+      summary: Metodo a traves del cual se actualiza la informacion del Perfil mediante su Id.
+      description: Para Actualizar los datos de un Perfil , sera necesario enviar todo el registro con los datos ya actualizados junto a su Id.
+      operationId: putPersonProfileById
       requestBody:
         description: Update an existent pet in the store
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/PersonRequest'
         required: true
       responses:
         '200':
@@ -64,739 +93,281 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid ID supplied
+                $ref: '#/components/schemas/PersonResponse'
         '404':
-          description: Pet not found
-        '405':
-          description: Validation exception
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    post:
-      tags:
-        - pet
-      summary: Add a new pet to the store
-      description: Add a new pet to the store
-      operationId: addPet
-      requestBody:
-        description: Create a new pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/findByStatus:
+          description: Not Found
+        '500':
+          description: error connecting to server
+  /person/{numberDocument}:
     get:
       tags:
-        - pet
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
+        - profile
+      summary: Metodo a traves del cual se obtiene la informacion del Perfil mediante su número de documento.
+      description: Para la obtencion de datos de un Perfil , sera necesario enviar el número de documento del perfil a consultar.
+      operationId: getPersonProfileByNumberDocument
       parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: false
-          explode: true
+        - name: numberDocument
+          in: path
+          description: Número de Documento del Perfil
+          required: true
+          schema:
+            type: number
+            example: 71111111
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonResponse'
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
+  /person/email/{email}:
+    get:
+      tags:
+        - profile
+      summary: Metodo a traves del cual se obtiene la informacion del Perfil mediante su email.
+      description: Para la obtencion de datos de un Perfil , sera necesario enviar el email del perfil a consultar.
+      operationId: getPersonProfileByEmail
+      parameters:
+        - name: email
+          in: path
+          description: Email del Perfil
+          required: true
           schema:
             type: string
-            default: available
-            enum:
-              - available
-              - pending
-              - sold
+            example: garychavezj@gmail.com
       responses:
         '200':
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/findByTags:
+                $ref: '#/components/schemas/PersonResponse'
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
+  /person/id/{idPerson}:
     get:
       tags:
-        - pet
-      summary: Finds Pets by tags
-      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
+        - profile
+      summary: Metodo a traves del cual se obtiene la informacion del Perfil mediante su email.
+      description: Para la obtencion de datos de un Perfil , sera necesario enviar el email del perfil a consultar.
+      operationId: getPersonProfileById
       parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
+        - name: idPerson
+          in: path
+          description: Identificador del Perfil
+          required: true
+          schema:
+            type: number
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonResponse'
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
+    delete:
+      tags:
+        - profile
+      summary: Metodo a traves del cual se elimina la informacion del Perfil mediante su email.
+      description: Para eliminar los datos de un Perfil , sera necesario enviar el email del perfil a consultar.
+      operationId: deletePersonProfileById
+      parameters:
+        - name: idPerson
+          in: path
+          description: Identificador del Perfil
+          required: true
+          schema:
+            type: number
+            example: 1
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Not Found
+        '500':
+          description: error connecting to server
+  /person/listdni:
+    get:
+      tags:
+        - profile
+      summary: Metodo a traves del cual se obtiene la informacion de una lista de Perfil.
+      description: Para la obtención de la lista de Perfiles , sera necesario mandar la lista de DNIs a consultar.
+      operationId: getListPersonProfile
+      parameters:
+        - in: query
+          name: requestList
+          description: requestList
+          required: true
           schema:
             type: array
             items:
-              type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/{petId}:
-    get:
-      tags:
-        - pet
-      summary: Find pet by ID
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to return
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-      security:
-        - api_key: []
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    post:
-      tags:
-        - pet
-      summary: Updates a pet in the store with form data
-      description: ''
-      operationId: updatePetWithForm
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: name
-          in: query
-          description: Name of pet that needs to be updated
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Status of pet that needs to be updated
-          schema:
-            type: string
-      responses:
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    delete:
-      tags:
-        - pet
-      summary: Deletes a pet
-      description: delete a pet
-      operationId: deletePet
-      parameters:
-        - name: api_key
-          in: header
-          description: ''
-          required: false
-          schema:
-            type: string
-        - name: petId
-          in: path
-          description: Pet id to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '400':
-          description: Invalid pet value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-        - pet
-      summary: uploads an image
-      description: ''
-      operationId: uploadFile
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: additionalMetadata
-          in: query
-          description: Additional Metadata
-          required: false
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /store/inventory:
-    get:
-      tags:
-        - store
-      summary: Returns pet inventories by status
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
-      security:
-        - api_key: []
-  /store/order:
-    post:
-      tags:
-        - store
-      summary: Place an order for a pet
-      description: Place a new order in the store
-      operationId: placeOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '405':
-          description: Invalid input
-  /store/order/{orderId}:
-    get:
-      tags:
-        - store
-      summary: Find purchase order by ID
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-      operationId: getOrderById
-      parameters:
-        - name: orderId
-          in: path
-          description: ID of order that needs to be fetched
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Order not found
-    delete:
-      tags:
-        - store
-      summary: Delete purchase order by ID
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-      operationId: deleteOrder
-      parameters:
-        - name: orderId
-          in: path
-          description: ID of the order that needs to be deleted
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Order not found
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/BodyPersonRequest'
+
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
-  /user/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
+                $ref: '#/components/schemas/PersonResponse'
         '404':
-          description: User not found
-    put:
-      tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
+          description: Not Found
+        '500':
+          description: error connecting to server
+
 components:
   schemas:
-    Order:
+    PersonRequest:
+      required:
+        - name
+        - firstLastName
+        - secondLastName
+        - typePerson
+        - typeDocument
+        - numberDocument
       type: object
       properties:
         id:
           type: integer
+          description: identificador de la persona
           format: int64
-          example: 10
-        petId:
-          type: integer
-          format: int64
-          example: 198772
-        quantity:
-          type: integer
-          format: int32
-          example: 7
-        shipDate:
+          example: 1
+        typePerson:
           type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          example: approved
+          description: Tipo de persona
+          example: Natural
           enum:
-            - placed
-            - approved
-            - delivered
-        complete:
-          type: boolean
-      xml:
-        name: order
-    Customer:
+            - Natural
+            - Juridica
+        typeDocument:
+          type: string
+          description: Tipo de documento
+          example: DNI
+          enum:
+            - DNI
+            - RUC
+            - Carnet_Extranjeria
+        numberDocument:
+          type: number
+          description: Número de documento
+          example: 71111111
+        name:
+          type: string
+          description: Nombre de la Persona
+          example: Alberto
+        firstLastName:
+          type: string
+          description: Primer apellido
+          example: Chavez
+        secondLastName:
+          type: string
+          description: Segundo apellido
+          example: Jimenez
+        socialReason:
+          type: string
+          description: Razón social
+          example: AlbCHJ
+        email:
+          type: string
+          example: garychavezj@email.com
+        phone:
+          type: number
+          description: Número de teléfono
+          example: 987654321
+        address:
+          description: Dirección
+          $ref: '#/components/schemas/Address'
+    BodyPersonRequest:
+      required:
+        - numberDocument
+      properties:
+        typeDocument:
+          type: string
+          description: typeDocument
+          enum:
+            - DNI
+            - RUC
+            - Carnet_Extranjeria
+        numberDocument:
+          type: integer
+          format: int64
+          description: numberDocument
+        name:
+          type: string
+          description: name
+    PersonResponse:
       type: object
       properties:
         id:
           type: integer
+          description: identificador de la persona
           format: int64
-          example: 100000
-        username:
+          example: 1
+        typePerson:
           type: string
-          example: fehguy
+          description: Tipo de persona
+          example: Natural
+          enum:
+            - Natural
+            - Juridica
+        typeDocument:
+          type: string
+          description: Tipo de documento
+          example: DNI
+          enum:
+            - DNI
+            - RUC
+            - Carnet_Extranjeria
+        numberDocument:
+          type: number
+          description: Número de documento
+          example: 71111111
+        name:
+          type: string
+          description: Nombre de la Persona
+          example: Alberto
+        firstLastName:
+          type: string
+          description: Primer apellido
+          example: Chavez
+        secondLastName:
+          type: string
+          description: Segundo apellido
+          example: Jimenez
+        socialReason:
+          type: string
+          description: Razón social
+          example: AlbCHJ
+        email:
+          type: string
+          example: garychavezj@email.com
+        phone:
+          type: number
+          description: Número de teléfono
+          example: 987654321
         address:
-          type: array
-          xml:
-            name: addresses
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Address'
-      xml:
-        name: customer
+          description: Dirección
+          $ref: '#/components/schemas/Address'
     Address:
       type: object
       properties:
         street:
           type: string
-          example: 437 Lytton
+          example: Av. Gasoducto
         city:
           type: string
-          example: Palo Alto
-        state:
+          example: Lima
+        country:
           type: string
-          example: CA
-        zip:
-          type: string
-          example: '94301'
-      xml:
-        name: address
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        name:
-          type: string
-          example: Dogs
-      xml:
-        name: category
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        username:
-          type: string
-          example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
-        email:
-          type: string
-          example: john@email.com
-        password:
-          type: string
-          example: '12345'
-        phone:
-          type: string
-          example: '12345'
-        userStatus:
-          type: integer
-          description: User Status
-          format: int32
-          example: 1
-      xml:
-        name: user
-    Tag:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-      xml:
-        name: tag
-    Pet:
-      required:
-        - name
-        - photoUrls
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        name:
-          type: string
-          example: doggie
-        category:
-          $ref: '#/components/schemas/Category'
-        photoUrls:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            type: string
-            xml:
-              name: photoUrl
-        tags:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Tag'
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
-      xml:
-        name: pet
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
-  requestBodies:
-    Pet:
-      description: Pet object that needs to be added to the store
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Pet'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+          example: Perú
